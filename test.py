@@ -1,5 +1,6 @@
-import re
- 
-email_regx = r'^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
-a = re.findall(email_regx,'dev.faris404@gmail.com fjgsajf burk.lee@gmail.com')
-print(a)
+206.34375,
+66.75
+
+
+258.09375,
+80.25

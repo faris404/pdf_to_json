@@ -13,25 +13,31 @@ def validate_string(string):
 def key_values(blocks):
    result = dict()
    _key = None
-   email_regx = r'^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
+
 
    for block in blocks:
       for line in block['lines']:
          for span in line['spans']:
-            email_chk = re.findall(email_regx,span['text'])
-            if email_chk:
-               result['email'] = email_chk[0]
+           
+            
+
             if span['size'] > 15:
                #  getting the name
                result['name']=validate_string(span['text'])
- 
 
+             #  email and address
+            elif span['origin'][0]>200 and span['origin'][0]<300:
+               code_email = span['text'].split('|')
+               print(code_email)
+               if result.get('email') == None:
+                  result['email'] = validate_string(code_email[1])
+                  result['address'] =validate_string(code_email[0])
+               else:
+                  result['address'] += span['text']
             # if we found a subheading
             elif span['size']>=12 and span['size']<15:
                if span['text'].strip():
                   _key = validate_string(span['text'])
-               
-
 
             else:
               
