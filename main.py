@@ -1,6 +1,6 @@
 import fitz
 import json
-import re
+import click
 
 class PDFParser:
 
@@ -10,12 +10,16 @@ class PDFParser:
       self.output = output_file
 
    #  opening file and read all text with properties like size,origin in dict format
-   def extract_data(self):
-      with fitz.open(self.input) as doc:
-         for page in doc:
-            self.tojson(page.getText('dict')['blocks'])
+   def parse(self):
+      try:
 
-
+         with fitz.open(self.input) as doc:
+            for page in doc:
+               self.tojson(page.getText('dict')['blocks'])
+      except Exception as e:
+         # print(e.args[0])
+         pass
+      
    #  function to extract one info from the pdf blocks
    def tojson(self,blocks):
 
@@ -54,7 +58,7 @@ class PDFParser:
                         result[_key] = self.validate_string(span['text'])
 
       # save the result to json file
-      with open('result.json', 'w') as fp:
+      with open(self.output, 'w') as fp:
          json.dump(result, fp)
 
 
@@ -65,6 +69,22 @@ class PDFParser:
       return string.strip()
 
 
-if __name__ == "__main__":
-   pdf = PDFParser('sample.pdf','fff')
-   pdf.extract_data()
+#  cammand lines using click
+@click.command()
+@click.option('--input', help='Input file path.')
+@click.option('--output',help='Output file path.')
+def main(input, output):
+   #  validate inputs
+   if not input or input.split('.')[1] != 'pdf':
+      print('Invalid input file')
+   elif not output or output.split('.')[1] != 'json':
+      print('Invalid output file')
+      
+   else:
+      #  parsing data
+      pdf = PDFParser(input,output)   
+      pdf.parse()
+
+if __name__ == '__main__':
+    main()
+
